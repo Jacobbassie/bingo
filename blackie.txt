@@ -1,0 +1,158 @@
+"""
+MALARIA PATIENT ASSESSMENT SYSTEM
+Educational beginner project.
+
+Important:
+- This program is for learning and record-keeping only.
+- It does not diagnose malaria or determine clinical severity.
+- A qualified healthcare professional must interpret symptoms and test results.
+- This demo does not save patient information to disk.
+"""
+
+def ask_nonempty(prompt):
+    while True:
+        value = input(prompt).strip()
+        if value:
+            return value
+        print("This field cannot be empty.")
+
+
+def ask_age():
+    while True:
+        try:
+            age = int(input("Enter patient age in years: "))
+            if age < 0:
+                print("Age cannot be negative.")
+                continue
+            return age
+        except ValueError:
+            print("Please enter a whole number, such as 25.")
+
+
+def ask_yes_no(prompt):
+    while True:
+        answer = input(prompt + " (Y/N): ").strip().upper()
+        if answer in ("Y", "N"):
+            return answer
+        print("Please enter Y for Yes or N for No.")
+
+
+def ask_test_result():
+    while True:
+        result = input("Malaria test result (Y/N/NA): ").strip().upper()
+        if result in ("Y", "N", "NA"):
+            return result
+        print("Please enter Y, N, or NA.")
+
+
+def ask_measurement(prompt):
+    while True:
+        try:
+            value = float(input(prompt))
+            if value <= 0:
+                print("Please enter a number greater than zero.")
+                continue
+            return value
+        except ValueError:
+            print("Please enter a valid number, such as 60 or 1.70.")
+
+
+def calculate_adult_bmi_category(age, bmi):
+    """Simple adult BMI grouping; not intended for children or diagnosis."""
+    if age < 18:
+        return "Adult BMI categories do not apply; age-specific assessment is needed."
+    if bmi < 18.5:
+        return "Below adult healthy-weight range"
+    if bmi < 25:
+        return "Within adult healthy-weight range"
+    if bmi < 30:
+        return "Above adult healthy-weight range"
+    return "High adult BMI range"
+
+
+def assess_patient():
+    print("\n" + "=" * 52)
+    print("           MALARIA PATIENT ASSESSMENT")
+    print("=" * 52)
+
+    # 1. Patient demographics
+    print("\n--- 1. PATIENT INFORMATION ---")
+    name = ask_nonempty("Patient name: ")
+    age = ask_age()
+    sex = ask_nonempty("Sex: ")
+    location = ask_nonempty("Location: ")
+
+    # 2. Symptoms
+    print("\n--- 2. SYMPTOMS ---")
+    print("Answer Y for Yes or N for No.")
+    symptom_names = ["Fever", "Chills", "Headache", "Sweating"]
+    symptoms = {}
+    for symptom in symptom_names:
+        symptoms[symptom] = ask_yes_no(f"Does the patient have {symptom.lower()}?")
+    symptom_count = sum(answer == "Y" for answer in symptoms.values())
+
+    # 3. Test result
+    print("\n--- 3. MALARIA TEST ---")
+    test_result = ask_test_result()
+
+    # 4. Body measurements
+    print("\n--- 4. BODY MEASUREMENTS ---")
+    weight = ask_measurement("Weight in kilograms: ")
+    height = ask_measurement("Height in metres (e.g. 1.70): ")
+    bmi = weight / (height ** 2)
+    bmi_category = calculate_adult_bmi_category(age, bmi)
+
+    # 5. Neutral summary based on reported result
+    if test_result == "Y":
+        test_summary = "Positive test result reported"
+    elif test_result == "N":
+        test_summary = "Negative test result reported"
+    else:
+        test_summary = "Test result unavailable"
+
+    # 6. Print report
+    print("\n" + "=" * 52)
+    print("                  PATIENT REPORT")
+    print("=" * 52)
+    print(f"Name: {name}")
+    print(f"Age: {age}")
+    print(f"Sex: {sex}")
+    print(f"Location: {location}")
+
+    print("\nReported symptoms:")
+    for symptom, answer in symptoms.items():
+        print(f"  - {symptom}: {'Yes' if answer == 'Y' else 'No'}")
+    print(f"Total symptoms reported: {symptom_count} of {len(symptoms)}")
+
+    print(f"\nMalaria test result: {test_result}")
+    print(f"Test summary: {test_summary}")
+    print(f"Weight: {weight:.1f} kg")
+    print(f"Height: {height:.2f} m")
+    print(f"BMI: {bmi:.2f}")
+    print(f"BMI category: {bmi_category}")
+
+    print("\nIMPORTANT HEALTH NOTE")
+    print("This educational program does not diagnose malaria")
+    print("or assess whether malaria is severe.")
+    print("A healthcare professional should interpret symptoms")
+    print("and test results. Seek urgent medical care for severe")
+    print("or rapidly worsening symptoms.")
+    print("=" * 52)
+
+
+def main():
+    print("=" * 52)
+    print("       MALARIA PATIENT ASSESSMENT SYSTEM")
+    print("                  Beginner Project")
+    print("=" * 52)
+
+    while True:
+        assess_patient()
+        again = input("\nAssess another patient? (Y/N): ").strip().upper()
+        if again != "Y":
+            print("\nThank you. Program closed.")
+            break
+
+
+if __name__ == "__main__":
+    main()
